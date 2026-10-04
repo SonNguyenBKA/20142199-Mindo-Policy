@@ -1,0 +1,304 @@
+@import "tailwindcss";
+
+/* ============================================================
+   Mindosoft · Design tokens (theo Hồ sơ năng lực 2026)
+
+   Trang khoá một nền tối: navy của bìa hồ sơ + lime thương hiệu.
+   Bo góc: khối nội dung 16px (rounded-2xl), nút và chip bo tròn hẳn.
+   ============================================================ */
+@theme {
+  --color-night: #06111f; /* nền trang */
+  --color-navy: #0a1a33; /* khối nổi */
+  --color-navy-soft: #10223f; /* khối nổi lớp 2 */
+  --color-line: #1d3050; /* viền mảnh */
+  --color-ink: #071426; /* chữ trên nút lime */
+  --color-azure: #2a62d0; /* màu phụ: nền/viền; chữ trắng trên nền này đạt 5:1 */
+  --color-azure-soft: #8fb4ff; /* chữ xanh trên nền navy (8.4:1) */
+
+  --color-lime: #b4d001;
+  --color-lime-soft: #d3e86a;
+
+  --color-snow: #eef3f9;
+  --color-haze: #a3b3c8;
+  --color-dim: #7d8fa6; /* chữ phụ nhỏ: đạt 5.2:1 cả trên nền navy */
+
+  --font-sans: var(--font-be-vietnam), ui-sans-serif, system-ui, sans-serif;
+
+  --header-height: 72px;
+}
+
+:root {
+  --accent-text: #b4d001;
+}
+
+html {
+  scroll-behavior: smooth;
+  -webkit-tap-highlight-color: transparent;
+}
+
+body {
+  background-color: var(--color-night);
+  color: var(--color-snow);
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+  overflow-x: hidden;
+}
+
+body[data-scroll-locked="true"] {
+  overflow: hidden;
+}
+
+::selection {
+  background-color: var(--color-lime);
+  color: var(--color-ink);
+}
+
+@utility container-page {
+  width: 100%;
+  max-width: 1280px;
+  margin-inline: auto;
+  padding-inline: 1rem;
+
+  @media (width >= 48rem) {
+    padding-inline: 2.5rem;
+  }
+}
+
+/* ============================================================
+   Xen kẽ sáng / tối theo section (như hồ sơ: bìa tối, trang nội dung sáng)
+
+   Mọi màu trong code đều đi qua biến --color-*, nên chỉ cần khai báo lại biến
+   trên section là toàn bộ chữ, thẻ, viền bên trong tự đổi theo.
+   - `.theme-light`: section nền sáng
+   - `.theme-dark` : ép lại tông tối cho một khối nằm trong section sáng
+     (ô số liệu, khung điện thoại, thẻ nhóm dịch vụ...)
+   `color` phải khai báo lại tại chỗ vì giá trị kế thừa từ body đã được tính
+   sẵn theo tông tối.
+   ============================================================ */
+.theme-light {
+  --color-night: #f1f4f9; /* nền section */
+  --color-navy: #fdfdfe; /* thẻ */
+  --color-navy-soft: #e9eef6;
+  --color-line: #d6dfeb;
+  --color-snow: #0b1b33; /* chữ chính: navy (15.6:1) */
+  --color-haze: #46566d; /* chữ thân bài (6.8:1) */
+  --color-dim: #5d6c82; /* chữ phụ nhỏ (4.8:1) */
+  --color-azure-soft: #2459c2; /* chữ xanh trên nền sáng (5.8:1) */
+  --accent-text: #5a6d00; /* lime đổi sang ô-liu đậm khi làm màu chữ (5.3:1) */
+  color: var(--color-snow);
+}
+.theme-dark {
+  --color-night: #06111f;
+  --color-navy: #0a1a33;
+  --color-navy-soft: #10223f;
+  --color-line: #1d3050;
+  --color-snow: #eef3f9;
+  --color-haze: #a3b3c8;
+  --color-dim: #7d8fa6;
+  --color-azure-soft: #8fb4ff;
+  --accent-text: #b4d001;
+  color: var(--color-snow);
+}
+/*
+ * Bước chuyển sáng/tối: section sáng là một "tấm" bo tròn góc trên và dưới,
+ * đặt trên bầu trời tối. Ranh giới sắc nét nhưng mềm nhờ đường cong ở góc,
+ * không dùng dải chuyển màu (dải gradient nhìn như vệt bẩn).
+ */
+.section-sheet {
+  border-radius: 28px;
+}
+@media (width >= 48rem) {
+  .section-sheet {
+    border-radius: 48px;
+  }
+}
+
+/*
+ * Lime làm NỀN (nút, thẻ chọn) giữ nguyên màu sáng vì chữ trên đó là navy.
+ * Lime làm CHỮ trên nền sáng thì quá nhạt (1.6:1), nên đổi sang ô-liu.
+ */
+.theme-light .text-lime {
+  color: var(--accent-text);
+}
+.theme-light .text-lime-soft {
+  color: #4d5e00;
+}
+.theme-dark .text-lime {
+  color: var(--color-lime);
+}
+.theme-dark .text-lime-soft {
+  color: var(--color-lime-soft);
+}
+
+/* Chừa chiều cao header khi cuộn tới anchor */
+@utility anchor-offset {
+  scroll-margin-top: var(--header-height);
+}
+
+/* ============================================================
+   Trạng thái chờ trước khi GSAP chạy
+
+   `.motion-ok` có sẵn trên <html> từ server nên không lệch hydration.
+   Hai đường thoát để nội dung không bị ẩn vĩnh viễn:
+     - JS tắt            -> <noscript> trong layout ghi đè
+     - giảm chuyển động  -> media query cuối file ghi đè
+   ============================================================ */
+html.motion-ok [data-reveal] {
+  opacity: 0;
+  transform: translateY(32px);
+}
+html.motion-ok [data-reveal="fade"] {
+  transform: none;
+}
+html.motion-ok [data-reveal="scale"] {
+  transform: scale(0.94);
+}
+html.motion-ok [data-reveal="left"] {
+  transform: translateX(-40px);
+}
+/* Lưới thẻ: từng thẻ chờ bên dưới, chạy lên lần lượt khi cuộn tới */
+html.motion-ok [data-stagger]:not([data-stagger-done]) > * {
+  opacity: 0;
+  transform: translateY(64px);
+}
+/* Vạch kẻ tự vẽ từ trái sang khi cuộn tới */
+html.motion-ok [data-draw] {
+  transform: scaleX(0);
+  transform-origin: left center;
+}
+/* Phần tử của hero chạy theo timeline riêng lúc tải trang */
+html.motion-ok [data-hero] {
+  opacity: 0;
+}
+html.motion-ok [data-mask-line] > span {
+  transform: translateY(105%);
+}
+/* Vòng hero chờ để tự vẽ ra, lõi chờ để bật lên */
+html.motion-ok [data-hero-ring] {
+  stroke-dashoffset: var(--dash);
+}
+html.motion-ok [data-hero-core] {
+  opacity: 0;
+}
+
+/* Dòng tiêu đề trượt lên từ sau một khung che */
+[data-mask-line] {
+  display: block;
+  overflow: hidden;
+  padding-bottom: 0.08em;
+  margin-bottom: -0.08em;
+}
+[data-mask-line] > span {
+  display: inline-block;
+}
+
+/* Ẩn thanh cuộn ngang của các dải cuộn trên mobile */
+.no-scrollbar {
+  scrollbar-width: none;
+}
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
+/* ============================================================
+   Bầu trời đêm (components/bg/NightSky.tsx), CSS thuần
+   ============================================================ */
+
+/* Chấm sao: sáng tối luân phiên giữa hai mức riêng của từng sao */
+@keyframes sky-twinkle {
+  0%,
+  100% {
+    opacity: var(--tw-min, 0.2);
+  }
+  50% {
+    opacity: var(--tw-max, 1);
+  }
+}
+.sky-twinkle {
+  animation: sky-twinkle var(--tw-dur, 4s) ease-in-out var(--tw-delay, 0s) infinite backwards;
+}
+
+/* Sao 4 cánh: loé lên, phồng nhẹ và xoay một chút rồi tắt dần */
+@keyframes sky-sparkle {
+  0%,
+  100% {
+    opacity: var(--sp-min, 0.15);
+    transform: rotate(var(--sp-rot)) scale(0.55);
+  }
+  50% {
+    opacity: var(--sp-max, 1);
+    transform: rotate(calc(var(--sp-rot) + 45deg)) scale(1);
+  }
+}
+.sky-sparkle {
+  transform: rotate(var(--sp-rot)) scale(0.55);
+  animation: sky-sparkle var(--tw-dur, 5s) ease-in-out var(--tw-delay, 0s) infinite backwards;
+}
+
+/*
+ * Sao băng: chỉ bay trong khoảng 1/4 đầu chu kỳ, còn lại ẩn để chờ lượt sau,
+ * nên trên trời lúc nào cũng có vài vệt rải rác chứ không chạy dồn dập.
+ *
+ * `rotate()` phải nằm trong keyframe (cùng thuộc tính transform với translate),
+ * quay trước rồi `translateX` sau để vệt đi đúng theo trục nghiêng của nó.
+ * `backwards` giữ vệt ở trạng thái ẩn suốt thời gian chờ delay ban đầu.
+ */
+/* Trên nền sáng: sao 4 cánh nhạt hơn để không tranh với chữ */
+.sky-sparkle-soft {
+  --sp-min: 0.15;
+  --sp-max: 0.75;
+}
+
+@keyframes sky-meteor {
+  0% {
+    opacity: 0;
+    transform: rotate(var(--mt-angle)) translateX(0) scaleX(0.3);
+  }
+  3% {
+    opacity: 1;
+  }
+  20% {
+    opacity: 1;
+  }
+  26% {
+    opacity: 0;
+    transform: rotate(var(--mt-angle)) translateX(var(--mt-travel)) scaleX(1);
+  }
+  100% {
+    opacity: 0;
+    transform: rotate(var(--mt-angle)) translateX(var(--mt-travel)) scaleX(1);
+  }
+}
+.sky-meteor {
+  opacity: 0;
+  transform: rotate(var(--mt-angle));
+  transform-origin: left center;
+  animation: sky-meteor var(--mt-dur, 10s) cubic-bezier(0.35, 0, 0.65, 1) var(--mt-delay, 0s) infinite backwards;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+  /* Trời đứng yên: sao giữ độ sáng tĩnh, sao băng ẩn hẳn */
+  .sky-twinkle,
+  .sky-sparkle {
+    animation: none;
+    opacity: 0.6;
+  }
+  .sky-meteor {
+    display: none;
+  }
+  html.motion-ok [data-reveal],
+  html.motion-ok [data-stagger] > *,
+  html.motion-ok [data-hero],
+  html.motion-ok [data-draw],
+  html.motion-ok [data-mask-line] > span,
+  html.motion-ok [data-hero-core] {
+    opacity: 1;
+    transform: none;
+  }
+  html.motion-ok [data-hero-ring] {
+    stroke-dashoffset: 0;
+  }
+}
