@@ -17,6 +17,12 @@ export function HeroMotion({ children, className }: { children: ReactNode; class
     () => {
       const mm = gsap.matchMedia();
       mm.add(MOTION_OK, () => {
+        // Vòng là một cung liền; gắn nét đứt tạm thời (đúng bằng độ dài cung) để
+        // vẽ dần, vẽ xong thì gỡ để SVG trở lại dạng cung sạch.
+        const ring = scope.current?.querySelector<SVGPathElement>("[data-hero-ring]");
+        const ringLen = ring ? ring.getTotalLength() : 0;
+        if (ring) gsap.set(ring, { strokeDasharray: ringLen, strokeDashoffset: ringLen });
+
         const intro = gsap.timeline({ defaults: { ease: "expo.out" } });
         intro
           .to("[data-hero]:first-child", { opacity: 1, duration: 0.6 })
@@ -33,7 +39,15 @@ export function HeroMotion({ children, className }: { children: ReactNode; class
           )
           .to(
             "[data-hero-ring]",
-            { strokeDashoffset: 0, opacity: 1, duration: 1.8, ease: "power3.inOut" },
+            {
+              strokeDashoffset: 0,
+              opacity: 1,
+              duration: 1.8,
+              ease: "power3.inOut",
+              onComplete: () => {
+                if (ring) gsap.set(ring, { clearProps: "strokeDasharray,strokeDashoffset" });
+              },
+            },
             0.2,
           )
           .fromTo(

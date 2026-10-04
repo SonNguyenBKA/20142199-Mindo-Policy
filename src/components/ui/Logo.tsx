@@ -18,6 +18,24 @@ export const MARK = {
   rotate: -14,
 } as const;
 
+/**
+ * Vòng logo dưới dạng MỘT cung tròn liền (SVG path), không dùng
+ * stroke-dasharray: Figma và một số trình xuất SVG hiểu sai nét đứt (vòng vỡ
+ * thành nhiều đoạn hoặc thành vòng kín). Cung đi từ góc `rotate` theo chiều
+ * kim đồng hồ đúng phần nét liền của logo (dash / (dash + gap) vòng).
+ */
+export function markArcPath(cx: number, cy: number, r: number) {
+  const sweep = (MARK.dash / (MARK.dash + MARK.gap)) * 360;
+  const a1 = (MARK.rotate * Math.PI) / 180;
+  const a2 = ((MARK.rotate + sweep) * Math.PI) / 180;
+  const f = (n: number) => Math.round(n * 1000) / 1000;
+  const x1 = f(cx + r * Math.cos(a1));
+  const y1 = f(cy + r * Math.sin(a1));
+  const x2 = f(cx + r * Math.cos(a2));
+  const y2 = f(cy + r * Math.sin(a2));
+  return `M${x1} ${y1} A${r} ${r} 0 ${sweep > 180 ? 1 : 0} 1 ${x2} ${y2}`;
+}
+
 export function LogoMark({
   size = 32,
   className = "",
@@ -37,15 +55,11 @@ export function LogoMark({
       aria-hidden="true"
       className={className}
     >
-      <circle
-        cx="24"
-        cy="24"
-        r={MARK.r}
+      <path
+        d={markArcPath(24, 24, MARK.r)}
         stroke="currentColor"
         strokeWidth={MARK.width}
         strokeLinecap="round"
-        strokeDasharray={`${MARK.dash} ${MARK.gap}`}
-        transform={`rotate(${MARK.rotate} 24 24)`}
       />
       <circle cx="24" cy="24" r={MARK.core} fill={core} />
     </svg>
