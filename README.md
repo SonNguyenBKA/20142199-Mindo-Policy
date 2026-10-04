@@ -1,4 +1,4 @@
-# Mindo-Policy
+# MindoSoft
 
 Landing page giới thiệu Mindosoft, nội dung lấy từ *Hồ sơ năng lực 2026*.
 
