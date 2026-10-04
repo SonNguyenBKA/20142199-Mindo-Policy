@@ -290,7 +290,8 @@ html.motion-ok [data-hero-core] {
     display: none;
   }
   html.motion-ok [data-reveal],
-  html.motion-ok [data-stagger] > *,
+  /* phải khớp đúng độ ưu tiên của luật chờ phía trên (có :not), nếu không card bị ẩn mãi */
+  html.motion-ok [data-stagger]:not([data-stagger-done]) > *,
   html.motion-ok [data-hero],
   html.motion-ok [data-draw],
   html.motion-ok [data-mask-line] > span,
