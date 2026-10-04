@@ -1,14 +1,21 @@
 import type React from "react";
 import { ArrowRight } from "@phosphor-icons/react/dist/ssr";
 import { CtaLink } from "@/components/ui/CtaLink";
+import { MARK } from "@/components/ui/Logo";
 import { CONTACT_LABEL, COVER_TAGS, HERO } from "@/lib/content";
 import { HeroMotion } from "@/components/motion/HeroMotion";
 import { TagMarquee } from "@/components/motion/TagMarquee";
 
-/* Vòng hở như logo: r = 128 → chu vi ≈ 804.2, nét liền 84% */
-const R = 128;
+/*
+ * Vòng hero là logo Mindo phóng to: cùng tỉ lệ với MARK (48 → 400, hệ số 25/3),
+ * nên r = 125, nét dày ≈ 43.4, lõi ≈ 36.2, khoảng hở từ 12 giờ tới 2 giờ.
+ */
+const SCALE = 400 / MARK.box;
+const R = MARK.r * SCALE;
+const RING_WIDTH = MARK.width * SCALE;
+const CORE_R = MARK.core * SCALE;
 const CIRC = 2 * Math.PI * R;
-const DASH = CIRC * 0.84;
+const DASH = CIRC * (MARK.dash / (MARK.dash + MARK.gap));
 
 /** Các chấm "dữ liệu" bay từ ngoài vào lõi. Toạ độ cố định để SSR khớp client. */
 const DATA_DOTS = [
@@ -79,7 +86,6 @@ export function Hero() {
               aria-label="Dữ liệu từ nhiều nguồn hội tụ về một quyết định"
             >
               <circle cx="200" cy="200" r="168" fill="none" stroke="rgb(255 255 255 / 0.07)" strokeDasharray="2 8" />
-              <circle cx="200" cy="200" r="150" fill="none" stroke="rgb(255 255 255 / 0.05)" />
               <g data-hero-ring-spin>
                 <circle
                   data-hero-ring
@@ -88,9 +94,10 @@ export function Hero() {
                   r={R}
                   fill="none"
                   stroke="rgb(214 226 240 / 0.24)"
-                  strokeWidth="56"
+                  strokeWidth={RING_WIDTH}
+                  strokeLinecap="round"
                   strokeDasharray={`${DASH} ${CIRC}`}
-                  transform="rotate(-25 200 200)"
+                  transform={`rotate(${MARK.rotate} 200 200)`}
                   style={{ "--dash": DASH } as React.CSSProperties}
                 />
               </g>
@@ -109,7 +116,7 @@ export function Hero() {
                 data-hero-core
                 cx="200"
                 cy="200"
-                r="50"
+                r={CORE_R}
                 fill="var(--color-lime)"
                
               />

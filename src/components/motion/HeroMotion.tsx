@@ -33,7 +33,7 @@ export function HeroMotion({ children, className }: { children: ReactNode; class
           )
           .to(
             "[data-hero-ring]",
-            { strokeDashoffset: 0, duration: 1.8, ease: "power3.inOut" },
+            { strokeDashoffset: 0, opacity: 1, duration: 1.8, ease: "power3.inOut" },
             0.2,
           )
           .fromTo(

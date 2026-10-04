@@ -1,12 +1,22 @@
 /*
- * Dấu hiệu Mindosoft: vòng tròn hở màu trắng + lõi lime, đúng như bìa hồ sơ.
- *
- *   r = 13 → chu vi ≈ 81.68; khoảng hở ≈ 13.1, nét liền ≈ 68.6
- * SVG vẽ nét từ hướng 3 giờ theo chiều kim đồng hồ nên khoảng hở nằm ngay
- * trên hướng 3 giờ; xoay thêm -25° để nó rơi về góc trên-phải.
+ * Hình học logo Mindo, đo trực tiếp trên file logo gốc (img_peer_logo của
+ * Mindo-App), quy về hệ toạ độ 48×48:
+ *   vòng r = 15, nét dày = 0.35·r (5.21), đầu nét bo tròn
+ *   lõi lime r = 0.29·r (4.34)
+ *   khoảng hở nhìn thấy từ ngay sau 12 giờ tới khoảng 2 giờ; tính cả phần bo
+ *   của hai đầu nét thì nét liền chiếm 282° (dash 73.83, gap 20.42)
+ *   xoay -14° để nét bắt đầu ngay dưới hướng 2 giờ và kết thúc ở hướng 12 giờ
+ * Hero dùng lại đúng các tỉ lệ này (xem MARK) để logo lớn và nhỏ y hệt nhau.
  */
-const RING_DASH = 68.6;
-const RING_GAP = 13.1;
+export const MARK = {
+  box: 48,
+  r: 15,
+  width: 5.21,
+  dash: 73.83,
+  gap: 20.42,
+  core: 4.34,
+  rotate: -14,
+} as const;
 
 export function LogoMark({
   size = 32,
@@ -30,14 +40,14 @@ export function LogoMark({
       <circle
         cx="24"
         cy="24"
-        r="13"
+        r={MARK.r}
         stroke="currentColor"
-        strokeWidth="6"
+        strokeWidth={MARK.width}
         strokeLinecap="round"
-        strokeDasharray={`${RING_DASH} ${RING_GAP}`}
-        transform="rotate(-25 24 24)"
+        strokeDasharray={`${MARK.dash} ${MARK.gap}`}
+        transform={`rotate(${MARK.rotate} 24 24)`}
       />
-      <circle cx="24" cy="24" r="4.4" fill={core} />
+      <circle cx="24" cy="24" r={MARK.core} fill={core} />
     </svg>
   );
 }

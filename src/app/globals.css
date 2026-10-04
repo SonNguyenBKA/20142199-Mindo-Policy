@@ -176,6 +176,7 @@ html.motion-ok [data-mask-line] > span {
 /* Vòng hero chờ để tự vẽ ra, lõi chờ để bật lên */
 html.motion-ok [data-hero-ring] {
   stroke-dashoffset: var(--dash);
+  opacity: 0; /* đầu nét bo tròn sẽ lộ thành một chấm nếu không ẩn */
 }
 html.motion-ok [data-hero-core] {
   opacity: 0;
@@ -301,5 +302,6 @@ html.motion-ok [data-hero-core] {
   }
   html.motion-ok [data-hero-ring] {
     stroke-dashoffset: 0;
+    opacity: 1;
   }
 }
