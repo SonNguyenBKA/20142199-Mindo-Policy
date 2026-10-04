@@ -81,14 +81,12 @@ export async function POST(request: Request) {
   try {
     await mkdir(path.dirname(STORE), { recursive: true });
     await appendFile(STORE, JSON.stringify(record) + "\n", "utf8");
-  } catch (err) {
-    console.error("[contact] không ghi được yêu cầu", err);
-    return NextResponse.json(
-      { ok: false, message: "Máy chủ chưa lưu được yêu cầu. Vui lòng thử lại sau ít phút." },
-      { status: 500 },
-    );
+    console.info("[contact] yêu cầu mới", { need: data.need, email: data.email, at: record.at });
+  } catch {
+    // Môi trường serverless (Vercel) có ổ đĩa chỉ đọc: ghi đủ nội dung vào log
+    // để còn tra lại trong Runtime Logs. Cần nối email/kho lưu thật để giữ lâu dài.
+    console.info("[contact] yêu cầu mới (chưa có kho lưu, chỉ ghi log)", JSON.stringify(record));
   }
-  console.info("[contact] yêu cầu mới", { need: data.need, email: data.email, at: record.at });
 
   return NextResponse.json({
     ok: true,
